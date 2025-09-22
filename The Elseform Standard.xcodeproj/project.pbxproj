@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		16B272FA2E81F10200BD065E /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272F92E81F10200BD065E /* Auth */; };
+		16B272FC2E81F10200BD065E /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272FB2E81F10200BD065E /* Functions */; };
+		16B272FE2E81F10200BD065E /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272FD2E81F10200BD065E /* PostgREST */; };
+		16B273002E81F10200BD065E /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272FF2E81F10200BD065E /* Realtime */; };
+		16B273022E81F10200BD065E /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 16B273012E81F10200BD065E /* Storage */; };
+		16F8DD9E2E81F55C004BAD34 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 16F8DD9D2E81F55C004BAD34 /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		16F85E382E52B5BF00E5B7BE /* The Elseform Standard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The Elseform Standard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,16 +32,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16B272FE2E81F10200BD065E /* PostgREST in Frameworks */,
+				16B272FC2E81F10200BD065E /* Functions in Frameworks */,
+				16F8DD9E2E81F55C004BAD34 /* Supabase in Frameworks */,
+				16B272FA2E81F10200BD065E /* Auth in Frameworks */,
+				16B273022E81F10200BD065E /* Storage in Frameworks */,
+				16B273002E81F10200BD065E /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16B272F52E81F0BA00BD065E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		16F85E2F2E52B5BF00E5B7BE = {
 			isa = PBXGroup;
 			children = (
 				16F85E3A2E52B5BF00E5B7BE /* The Elseform Standard */,
+				16B272F52E81F0BA00BD065E /* Frameworks */,
 				16F85E392E52B5BF00E5B7BE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,6 +88,12 @@
 			);
 			name = "The Elseform Standard";
 			packageProductDependencies = (
+				16B272F92E81F10200BD065E /* Auth */,
+				16B272FB2E81F10200BD065E /* Functions */,
+				16B272FD2E81F10200BD065E /* PostgREST */,
+				16B272FF2E81F10200BD065E /* Realtime */,
+				16B273012E81F10200BD065E /* Storage */,
+				16F8DD9D2E81F55C004BAD34 /* Supabase */,
 			);
 			productName = "The Elseform Standard";
 			productReference = 16F85E382E52B5BF00E5B7BE /* The Elseform Standard.app */;
@@ -95,7 +124,7 @@
 			mainGroup = 16F85E2F2E52B5BF00E5B7BE;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				16B272EB2E81E91B00BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 16F85E392E52B5BF00E5B7BE /* Products */;
@@ -346,7 +375,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		16B272EB2E81E91B00BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+		16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
 			requirement = {
@@ -355,6 +384,39 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		16B272F92E81F10200BD065E /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		16B272FB2E81F10200BD065E /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		16B272FD2E81F10200BD065E /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		16B272FF2E81F10200BD065E /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		16B273012E81F10200BD065E /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		16F8DD9D2E81F55C004BAD34 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 16F85E302E52B5BF00E5B7BE /* Project object */;
 }
