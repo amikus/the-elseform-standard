@@ -12,6 +12,8 @@ struct The_Elseform_StandardApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .background(Color("SwissCoffee"))
+                .ignoresSafeArea()
         }
     }
 }

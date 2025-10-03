@@ -14,11 +14,12 @@ struct StoryDetailView: View {
                     
                     Text(story.headline)
                         .font(.custom("Georgia-Bold", size: 28))
+                        .foregroundColor(.black)
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(story.teaser)
                         .font(.custom("Georgia", size: 18))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.black)
                         .fontWeight(.medium)
                 }
                 
@@ -27,11 +28,14 @@ struct StoryDetailView: View {
                 Text(story.body)
                     .font(.custom("Georgia", size: 16))
                     .lineSpacing(4)
+                    .foregroundColor(.black)
                 
                 Spacer(minLength: 50)
             }
             .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .background(Color("SwissCoffee"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

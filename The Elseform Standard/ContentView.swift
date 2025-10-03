@@ -14,71 +14,78 @@ struct ContentView: View {
     @State private var errorMessage: String?
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    BannerView()
-                    
-                    if isLoading {
-                        VStack {
-                            ProgressView()
-                            Text("Loading today's headlines...")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else if let errorMessage = errorMessage {
-                        VStack(spacing: 16) {
-                            Image(systemName: "exclamationmark.triangle")
-                                .font(.largeTitle)
-                                .foregroundColor(.orange)
-                            Text("Error loading headlines")
-                                .font(.headline)
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                            
-                            Button("Retry") {
-                                Task {
-                                    await loadHeadlines()
-                                }
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        BannerView()
+                        
+                        if isLoading {
+                            VStack {
+                                ProgressView()
+                                Text("Loading today's headlines...")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(.borderedProminent)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(headlines.sorted(by: { $0.position < $1.position })) { headline in
-                                if let story = headline.stories {
-                                    NavigationLink(destination: StoryDetailView(story: story)) {
-                                        HeadlineView(
-                                            text: story.headline,
-                                            position: headline.position,
-                                            storyType: story.story_type
-                                        )
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    if headline.position < 5 {
-                                        Divider()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        } else if let errorMessage = errorMessage {
+                            VStack(spacing: 16) {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.orange)
+                                Text("Error loading headlines")
+                                    .font(.headline)
+                                    .foregroundColor(.orange)
+                                Text(errorMessage)
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                                    .multilineTextAlignment(.center)
+                                
+                                Button("Retry") {
+                                    Task {
+                                        await loadHeadlines()
                                     }
                                 }
+                                .buttonStyle(.borderedProminent)
                             }
+                            .padding()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        } else {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(headlines.sorted(by: { $0.position < $1.position })) { headline in
+                                    if let story = headline.stories {
+                                        NavigationLink(destination: StoryDetailView(story: story)) {
+                                            HeadlineView(
+                                                text: story.headline,
+                                                position: headline.position,
+                                                storyType: story.story_type
+                                            )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                        
+                                        if headline.position < 5 {
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        
+                        Spacer()
+                            .frame(height: 60) // Space for footer
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            }
-            .refreshable { await loadHeadlines() }
-            .onChange(of: scenePhase) {
-                if scenePhase == .active {
-                    Task { await loadHeadlines() }
+                .refreshable { await loadHeadlines() }
+                .onChange(of: scenePhase) {
+                    if scenePhase == .active {
+                        Task { await loadHeadlines() }
+                    }
                 }
+                
+                FooterView()
             }
-            .background(.white)
+            .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
         }
         .task { await loadHeadlines() }
@@ -141,17 +148,44 @@ struct HeadlineView: View {
 
 struct BannerView: View {
     var body: some View {
-        Text("The Elseform Standard")
-            .font(.custom("Georgia-Bold", size: 32))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .padding(.top, 8)
-            .background(Color.black)
-            .foregroundColor(.white)
-            .kerning(-0.5)
+        
+        Image("Banner")
+        Divider()
+            .frame(height: 5)
+
+    }
+}
+
+struct FooterView: View {
+    var body: some View {
+        
+        VStack(spacing: 0) {
+            Divider()
+                .frame(height:2)
+            
+            HStack {
+                
+                Text ("© 2025 The Elseform Standard")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                
+                Spacer()
+                
+                NavigationLink(destination: AboutView()) {
+                    Text("About")
+                        .font(.system(size:16, weight: .medium))
+                        .foregroundColor(.black)
+                }
+                
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .frame(height: 60)
+        }
     }
 }
 
 #Preview {
     ContentView()
 }
+
