@@ -18,7 +18,7 @@ class SupabaseManager {
     
     func fetchTodaysHeadlines() async throws -> [DailyHeadline] {
         let todayEastern = DateFormatter.supabaseDate.string(from: Date())
-        
+
         let response: [DailyHeadline] = try await supabase
             .from("daily_headlines")
             .select("""
@@ -38,8 +38,66 @@ class SupabaseManager {
             .order("position")
             .execute()
             .value
-        
+
         return response
+    }
+
+    // MARK: - Authentication Methods
+
+    /// Signs up a new user with email and password
+    /// - Parameters:
+    ///   - email: The user's email address
+    ///   - password: The user's password (will be securely hashed by Supabase)
+    /// - Returns: The authentication session containing user info and access tokens
+    /// - Throws: Error if email already exists, password too weak, or network issues
+    func signUp(email: String, password: String) async throws -> Session {
+        let response = try await supabase.auth.signUp(
+            email: email,
+            password: password
+        )
+
+        // If email confirmation is enabled in Supabase, session will be nil
+        // User must click confirmation link in email before they can sign in
+        guard let session = response.session else {
+            throw AuthError.noSession
+        }
+
+        return session
+    }
+
+    /// Signs in an existing user with email and password
+    /// - Parameters:
+    ///   - email: The user's email address
+    ///   - password: The user's password
+    /// - Returns: The authentication session containing user info and access tokens
+    /// - Throws: Error if credentials are invalid or network issues
+    func signIn(email: String, password: String) async throws -> Session {
+        let session = try await supabase.auth.signIn(
+            email: email,
+            password: password
+        )
+
+        return session
+    }
+
+    /// Signs out the current user and invalidates their session
+    /// - Throws: Error if sign out fails (rare, usually network issues)
+    func signOut() async throws {
+        try await supabase.auth.signOut()
+    }
+}
+
+// MARK: - Custom Auth Errors
+
+/// Custom errors for authentication flows
+enum AuthError: LocalizedError {
+    case noSession
+
+    var errorDescription: String? {
+        switch self {
+        case .noSession:
+            return "Please check your email to confirm your account before signing in."
+        }
     }
 }
 
