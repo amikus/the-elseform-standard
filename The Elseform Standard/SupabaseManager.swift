@@ -85,6 +85,13 @@ class SupabaseManager {
     func signOut() async throws {
         try await supabase.auth.signOut()
     }
+
+    /// Gets the current session if one exists
+    /// - Returns: The current session, or nil if not authenticated
+    /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
+    func getCurrentSession() async throws -> Session? {
+        return try await supabase.auth.session
+    }
 }
 
 // MARK: - Custom Auth Errors

@@ -6,7 +6,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AuthenticationManager.self) private var authManager
 
     private let supabaseManager = SupabaseManager.shared
 
@@ -88,7 +88,6 @@ struct ContentView: View {
             }
             .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
-            .navigationBarBackButtonHidden(true)
         }
         .task { await loadHeadlines() }
     }
@@ -132,12 +131,12 @@ struct ContentView: View {
         Task {
             do {
                 try await supabaseManager.signOut()
-                // Navigate back to LoginView
-                dismiss()
+                // Update auth state - App will automatically switch to LoginView
+                authManager.signOut()
             } catch {
-                // If sign out fails, still navigate back
+                // If sign out fails, still update auth state
                 // (rare, usually means already signed out)
-                dismiss()
+                authManager.signOut()
             }
         }
     }
@@ -184,7 +183,7 @@ struct FooterView: View {
             Divider()
                 .frame(height:2)
 
-            HStack {
+            HStack(alignment: .top) {
                 Text ("© 2025 The Elseform Standard")
                     .font(.caption)
                     .foregroundColor(.gray)

@@ -19,6 +19,8 @@ struct LoginView: View {
         }
     }
 
+    @Environment(AuthenticationManager.self) private var authManager
+
     private let supabaseManager = SupabaseManager.shared
 
     @State private var authMode: AuthMode = .signIn
@@ -26,7 +28,6 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var errorMessage: String?
     @State private var isLoading: Bool = false
-    @State private var isAuthenticated: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -125,9 +126,6 @@ struct LoginView: View {
                         .disabled(isLoading)
                     }
                     .padding(.horizontal, 24)
-                    .navigationDestination(isPresented: $isAuthenticated) {
-                        ContentView()
-                    }
 
                     Spacer()
 
@@ -171,8 +169,9 @@ struct LoginView: View {
                 _ = try await supabaseManager.signUp(email: email, password: password)
             }
 
-            // Success! Trigger navigation
-            isAuthenticated = true
+            // Success! Update auth state
+            // This will trigger the App to switch to ContentView
+            authManager.signIn()
 
         } catch {
             // Handle errors with user-friendly messages

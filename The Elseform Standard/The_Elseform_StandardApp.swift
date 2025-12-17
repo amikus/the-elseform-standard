@@ -9,11 +9,27 @@ import SwiftUI
 
 @main
 struct The_Elseform_StandardApp: App {
+    /// Shared authentication manager
+    @State private var authManager = AuthenticationManager.shared
+
     var body: some Scene {
         WindowGroup {
-            LoginView()
-                .background(Color("SwissCoffee"))
-                .ignoresSafeArea()
+            Group {
+                if authManager.isAuthenticated {
+                    // User is logged in - show headlines
+                    ContentView()
+                } else {
+                    // User is not logged in - show login screen
+                    LoginView()
+                }
+            }
+            .background(Color("SwissCoffee"))
+            .ignoresSafeArea()
+            .task {
+                // Check for existing session when app launches
+                await authManager.checkAuthentication()
+            }
         }
+        .environment(authManager)
     }
 }
