@@ -23,6 +23,7 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String?
+    @State private var isLoading: Bool = false
 
     var body: some View {
         NavigationStack {
