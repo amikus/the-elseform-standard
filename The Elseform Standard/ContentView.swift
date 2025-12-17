@@ -6,13 +6,14 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
-    
+    @Environment(\.dismiss) private var dismiss
+
     private let supabaseManager = SupabaseManager.shared
 
     @State private var headlines: [DailyHeadline] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -82,15 +83,16 @@ struct ContentView: View {
                         Task { await loadHeadlines() }
                     }
                 }
-                
-                FooterView()
+
+                FooterView(isSignedIn: true, onSignOut: handleSignOut)
             }
             .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
+            .navigationBarBackButtonHidden(true)
         }
         .task { await loadHeadlines() }
     }
-    
+
     @MainActor
     private func loadHeadlines() async {
         
@@ -120,7 +122,24 @@ struct ContentView: View {
             if Task.isCancelled { return }
             errorMessage = error.localizedDescription
         }
-        
+
+    }
+
+    // MARK: - Sign Out Function
+
+    /// Handles user sign out and returns to login screen
+    private func handleSignOut() {
+        Task {
+            do {
+                try await supabaseManager.signOut()
+                // Navigate back to LoginView
+                dismiss()
+            } catch {
+                // If sign out fails, still navigate back
+                // (rare, usually means already signed out)
+                dismiss()
+            }
+        }
     }
 }
 
@@ -157,26 +176,39 @@ struct BannerView: View {
 }
 
 struct FooterView: View {
+    var isSignedIn: Bool = false
+    var onSignOut: (() -> Void)? = nil
+
     var body: some View {
-        
         VStack(spacing: 0) {
             Divider()
                 .frame(height:2)
-            
+
             HStack {
-                
                 Text ("© 2025 The Elseform Standard")
                     .font(.caption)
                     .foregroundColor(.gray)
-                
+
                 Spacer()
-                
-                NavigationLink(destination: AboutView()) {
-                    Text("About")
-                        .font(.system(size:16, weight: .medium))
-                        .foregroundColor(.black)
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    NavigationLink(destination: AboutView()) {
+                        Text("About")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.black)
+                    }
+
+                    // Sign Out button - invisible when not signed in, but takes up space
+                    Button(action: {
+                        onSignOut?()
+                    }) {
+                        Text("Sign Out")
+                            .font(.system(size: 13, weight: .regular))
+                            .foregroundColor(.gray)
+                    }
+                    .opacity(isSignedIn ? 1.0 : 0.0)
+                    .disabled(!isSignedIn)
                 }
-                
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 16)

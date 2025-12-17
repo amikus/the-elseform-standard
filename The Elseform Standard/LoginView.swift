@@ -135,7 +135,7 @@ struct LoginView: View {
                         .frame(height: 60) // Space for footer
                 }
 
-                FooterView()
+                FooterView(isSignedIn: false, onSignOut: nil)
             }
             .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
