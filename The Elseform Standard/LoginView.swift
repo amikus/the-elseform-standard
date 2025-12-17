@@ -19,11 +19,14 @@ struct LoginView: View {
         }
     }
 
+    private let supabaseManager = SupabaseManager.shared
+
     @State private var authMode: AuthMode = .signIn
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String?
     @State private var isLoading: Bool = false
+    @State private var isAuthenticated: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -100,17 +103,31 @@ struct LoginView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                             )
 
-                        NavigationLink(destination: ContentView()) {
-                            Text(authMode.buttonText)
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.black)
-                                .cornerRadius(8)
+                        Button(action: {
+                            Task {
+                                await handleAuthentication()
+                            }
+                        }) {
+                            HStack {
+                                if isLoading {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                }
+                                Text(authMode.buttonText)
+                                    .font(.system(size: 18, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(isLoading ? Color.gray : Color.black)
+                            .cornerRadius(8)
                         }
+                        .disabled(isLoading)
                     }
                     .padding(.horizontal, 24)
+                    .navigationDestination(isPresented: $isAuthenticated) {
+                        ContentView()
+                    }
 
                     Spacer()
 
@@ -122,6 +139,44 @@ struct LoginView: View {
             }
             .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
+        }
+    }
+
+    // MARK: - Authentication Function
+
+    /// Handles authentication based on current mode (Sign In or Sign Up)
+    @MainActor
+    private func handleAuthentication() async {
+        // Clear any previous errors
+        errorMessage = nil
+
+        // Basic validation
+        guard !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please enter both email and password"
+            return
+        }
+
+        // Show loading spinner
+        isLoading = true
+
+        // Ensure loading state is cleared even if task is cancelled
+        defer { isLoading = false }
+
+        do {
+            // Call appropriate Supabase method based on mode
+            switch authMode {
+            case .signIn:
+                _ = try await supabaseManager.signIn(email: email, password: password)
+            case .signUp:
+                _ = try await supabaseManager.signUp(email: email, password: password)
+            }
+
+            // Success! Trigger navigation
+            isAuthenticated = true
+
+        } catch {
+            // Handle errors with user-friendly messages
+            errorMessage = error.localizedDescription
         }
     }
 }
