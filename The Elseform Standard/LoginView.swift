@@ -6,8 +6,23 @@
 import SwiftUI
 
 struct LoginView: View {
+    // MARK: - Authentication Mode
+    enum AuthMode {
+        case signIn
+        case signUp
+
+        var buttonText: String {
+            switch self {
+            case .signIn: return "Sign In"
+            case .signUp: return "Create Account"
+            }
+        }
+    }
+
+    @State private var authMode: AuthMode = .signIn
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -17,7 +32,51 @@ struct LoginView: View {
 
                     Spacer()
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: 24) {
+                        // Toggle between Sign In and Sign Up
+                        HStack(spacing: 32) {
+                            Button(action: { authMode = .signIn }) {
+                                VStack(spacing: 4) {
+                                    Text("Sign In")
+                                        .font(.system(size: 18, weight: authMode == .signIn ? .semibold : .regular))
+                                        .foregroundColor(authMode == .signIn ? .black : .gray)
+
+                                    Rectangle()
+                                        .fill(authMode == .signIn ? Color.black : Color.clear)
+                                        .frame(height: 2)
+                                }
+                            }
+
+                            Button(action: { authMode = .signUp }) {
+                                VStack(spacing: 4) {
+                                    Text("Sign Up")
+                                        .font(.system(size: 18, weight: authMode == .signUp ? .semibold : .regular))
+                                        .foregroundColor(authMode == .signUp ? .black : .gray)
+
+                                    Rectangle()
+                                        .fill(authMode == .signUp ? Color.black : Color.clear)
+                                        .frame(height: 2)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+
+                        // Error message display
+                        if let errorMessage = errorMessage {
+                            HStack(spacing: 8) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.red)
+                                Text(errorMessage)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.red)
+                                    .multilineTextAlignment(.leading)
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.red.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+
                         TextField("Email", text: $email)
                             .textContentType(.emailAddress)
                             .autocapitalization(.none)
@@ -41,7 +100,7 @@ struct LoginView: View {
                             )
 
                         NavigationLink(destination: ContentView()) {
-                            Text("Go to Headlines")
+                            Text(authMode.buttonText)
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
