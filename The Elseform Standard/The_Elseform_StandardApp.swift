@@ -11,7 +11,7 @@ import SwiftUI
 struct The_Elseform_StandardApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
                 .background(Color("SwissCoffee"))
                 .ignoresSafeArea()
         }
