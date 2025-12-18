@@ -4,6 +4,8 @@
 //
 
 import SwiftUI
+import AuthenticationServices
+import CryptoKit
 
 struct LoginView: View {
     // MARK: - Authentication Mode
@@ -38,6 +40,32 @@ struct LoginView: View {
                     Spacer()
 
                     VStack(spacing: 24) {
+                        // Apple Sign-In Button
+                        SignInWithAppleButton(.signIn) { request in
+                            request.requestedScopes = [.fullName, .email]
+                        } onCompletion: { result in
+                            Task {
+                                await handleAppleSignIn(result)
+                            }
+                        }
+                        .frame(height: 50)
+                        .cornerRadius(8)
+
+                        // "or" divider
+                        HStack {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 1)
+                            Text("or")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(.horizontal, 8)
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 1)
+                        }
+                        .padding(.vertical, 8)
+
                         // Toggle between Sign In and Sign Up
                         HStack(spacing: 32) {
                             Button(action: { authMode = .signIn }) {
@@ -175,6 +203,43 @@ struct LoginView: View {
 
         } catch {
             // Handle errors with user-friendly messages
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Apple Sign-In Handler
+
+    /// Handles Apple Sign-In authorization result
+    @MainActor
+    private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
+        // Clear any previous errors
+        errorMessage = nil
+
+        do {
+            let authorization = try result.get()
+
+            guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+                errorMessage = "Unable to get Apple ID credentials"
+                return
+            }
+
+            guard let identityTokenData = appleIDCredential.identityToken,
+                  let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+                errorMessage = "Unable to get identity token"
+                return
+            }
+
+            // Sign in to Supabase with Apple ID token
+            _ = try await supabaseManager.signInWithApple(
+                idToken: identityToken,
+                nonce: nil
+            )
+
+            // Success! Update auth state
+            authManager.signIn()
+
+        } catch {
+            // Handle errors
             errorMessage = error.localizedDescription
         }
     }

@@ -5,6 +5,7 @@
 
 import Foundation
 import Supabase
+import AuthenticationServices
 
 class SupabaseManager {
     static let shared = SupabaseManager()
@@ -91,6 +92,22 @@ class SupabaseManager {
     /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
     func getCurrentSession() async throws -> Session? {
         return try await supabase.auth.session
+    }
+
+    /// Signs in with Apple using native iOS Sign in with Apple
+    /// - Parameters:
+    ///   - idToken: The identity token from Apple authorization
+    ///   - nonce: Optional nonce for additional security
+    /// - Returns: The authentication session
+    func signInWithApple(idToken: String, nonce: String?) async throws -> Session {
+        let session = try await supabase.auth.signInWithIdToken(
+            credentials: .init(
+                provider: .apple,
+                idToken: idToken,
+                nonce: nonce
+            )
+        )
+        return session
     }
 }
 
