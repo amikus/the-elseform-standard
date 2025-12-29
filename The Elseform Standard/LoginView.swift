@@ -110,27 +110,41 @@ struct LoginView: View {
                             .cornerRadius(8)
                         }
 
-                        TextField("Email", text: $email)
-                            .textContentType(.emailAddress)
-                            .autocapitalization(.none)
-                            .keyboardType(.emailAddress)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                        ZStack(alignment: .leading) {
+                            if email.isEmpty {
+                                Text("Email")
+                                    .foregroundColor(Color(.placeholderText))
+                                    .padding(.leading, 16)
+                            }
+                            TextField("", text: $email)
+                                .textContentType(.emailAddress)
+                                .autocapitalization(.none)
+                                .keyboardType(.emailAddress)
+                                .padding()
+                        }
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
 
-                        SecureField("Password", text: $password)
-                            .textContentType(.password)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                        ZStack(alignment: .leading) {
+                            if password.isEmpty {
+                                Text("Password")
+                                    .foregroundColor(Color(.placeholderText))
+                                    .padding(.leading, 16)
+                            }
+                            SecureField("", text: $password)
+                                .textContentType(.password)
+                                .padding()
+                        }
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
 
                         Button(action: {
                             Task {
