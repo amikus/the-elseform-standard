@@ -146,6 +146,19 @@ struct LoginView: View {
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                         )
 
+                        // Reset Password link
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                // TODO: Navigate to password reset flow
+                            }) {
+                                Text("Reset Password")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(.top, -16)
+
                         Button(action: {
                             Task {
                                 await handleAuthentication()
