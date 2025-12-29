@@ -87,6 +87,14 @@ class SupabaseManager {
         try await supabase.auth.signOut()
     }
 
+    /// Sends a password reset email to the user
+    /// - Parameter email: The user's email address
+    /// - Throws: Error if email sending fails or network issues
+    /// - Note: Supabase will send an email with a reset link to their secure password reset page
+    func resetPassword(email: String) async throws {
+        try await supabase.auth.resetPasswordForEmail(email)
+    }
+
     /// Gets the current session if one exists
     /// - Returns: The current session, or nil if not authenticated
     /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
