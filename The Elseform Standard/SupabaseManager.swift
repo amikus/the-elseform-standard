@@ -103,6 +103,15 @@ class SupabaseManager {
         try await supabase.auth.update(user: UserAttributes(password: newPassword))
     }
 
+    /// Sets the session using access and refresh tokens from password recovery link
+    /// - Parameters:
+    ///   - accessToken: The access token from the recovery URL
+    ///   - refreshToken: The refresh token from the recovery URL
+    /// - Throws: Error if tokens are invalid or session creation fails
+    func setSession(accessToken: String, refreshToken: String) async throws {
+        try await supabase.auth.setSession(accessToken: accessToken, refreshToken: refreshToken)
+    }
+
     /// Gets the current session if one exists
     /// - Returns: The current session, or nil if not authenticated
     /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
