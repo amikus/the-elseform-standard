@@ -95,6 +95,14 @@ class SupabaseManager {
         try await supabase.auth.resetPasswordForEmail(email)
     }
 
+    /// Updates the password for the currently authenticated user
+    /// - Parameter newPassword: The new password to set
+    /// - Throws: Error if password update fails or user is not authenticated
+    /// - Note: User must be authenticated (via password reset token or existing session) before calling this
+    func updatePassword(newPassword: String) async throws {
+        try await supabase.auth.update(user: UserAttributes(password: newPassword))
+    }
+
     /// Gets the current session if one exists
     /// - Returns: The current session, or nil if not authenticated
     /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
