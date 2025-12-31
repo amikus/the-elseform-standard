@@ -48,7 +48,7 @@ struct The_Elseform_StandardApp: App {
 
     private func handleDeepLink(_ url: URL) {
         // Check if this is a password reset link
-        // Expected format: theelseformstandard://reset-password?access_token=xxx&refresh_token=yyy
+        // Expected format: theelseformstandard://reset-password?code=xxx
         guard url.scheme == "theelseformstandard",
               url.host == "reset-password" else {
             return
@@ -60,26 +60,22 @@ struct The_Elseform_StandardApp: App {
             return
         }
 
-        // Extract tokens
-        let accessToken = queryItems.first(where: { $0.name == "access_token" })?.value
-        let refreshToken = queryItems.first(where: { $0.name == "refresh_token" })?.value
-
-        guard let accessToken = accessToken,
-              let refreshToken = refreshToken else {
+        // Extract recovery code
+        guard let code = queryItems.first(where: { $0.name == "code" })?.value else {
             return
         }
 
-        // Set the session with the recovery tokens
+        // Exchange the code for a session
         Task {
             do {
-                try await supabaseManager.setSession(accessToken: accessToken, refreshToken: refreshToken)
+                try await supabaseManager.exchangeCodeForSession(code: code)
 
                 // Show the update password view
                 await MainActor.run {
                     showUpdatePassword = true
                 }
             } catch {
-                print("Error setting session from recovery tokens: \(error)")
+                print("Error exchanging code for session: \(error)")
             }
         }
     }

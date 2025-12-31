@@ -103,13 +103,11 @@ class SupabaseManager {
         try await supabase.auth.update(user: UserAttributes(password: newPassword))
     }
 
-    /// Sets the session using access and refresh tokens from password recovery link
-    /// - Parameters:
-    ///   - accessToken: The access token from the recovery URL
-    ///   - refreshToken: The refresh token from the recovery URL
-    /// - Throws: Error if tokens are invalid or session creation fails
-    func setSession(accessToken: String, refreshToken: String) async throws {
-        try await supabase.auth.setSession(accessToken: accessToken, refreshToken: refreshToken)
+    /// Exchanges a recovery code for a session
+    /// - Parameter code: The recovery code from the password reset email
+    /// - Throws: Error if code is invalid or session creation fails
+    func exchangeCodeForSession(code: String) async throws {
+        _ = try await supabase.auth.exchangeCodeForSession(code: code)
     }
 
     /// Gets the current session if one exists
