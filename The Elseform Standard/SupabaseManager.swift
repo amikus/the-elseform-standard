@@ -107,7 +107,7 @@ class SupabaseManager {
     /// - Parameter code: The recovery code from the password reset email
     /// - Throws: Error if code is invalid or session creation fails
     func exchangeCodeForSession(code: String) async throws {
-        _ = try await supabase.auth.exchangeCodeForSession(code: code)
+        _ = try await supabase.auth.exchangeCodeForSession(authCode: code)
     }
 
     /// Gets the current session if one exists
