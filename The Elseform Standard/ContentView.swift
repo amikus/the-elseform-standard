@@ -63,7 +63,9 @@ struct ContentView: View {
                                             )
                                         }
                                         .buttonStyle(PlainButtonStyle())
-                                        
+                                        .accessibilityLabel(story.headline)
+                                        .accessibilityHint("Opens full story")
+
                                         if headline.position < 5 {
                                             Divider()
                                         }
@@ -168,6 +170,7 @@ struct BannerView: View {
     var body: some View {
         
         Image("Banner")
+            .accessibilityHidden(true)
         Divider()
             .frame(height: 5)
 
@@ -207,6 +210,7 @@ struct FooterView: View {
                     }
                     .opacity(isSignedIn ? 1.0 : 0.0)
                     .disabled(!isSignedIn)
+                    .accessibilityHidden(!isSignedIn)
                 }
             }
             .padding(.horizontal, 24)
