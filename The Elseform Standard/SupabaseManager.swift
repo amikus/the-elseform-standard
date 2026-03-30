@@ -110,6 +110,21 @@ class SupabaseManager {
         _ = try await supabase.auth.exchangeCodeForSession(authCode: code)
     }
 
+    /// Fetches whether the current user has an active subscription
+    /// - Returns: true if the user's profiles row has is_subscribed = true
+    func fetchIsSubscribed() async throws -> Bool {
+        let user = try await supabase.auth.user()
+        let response: ProfileResponse = try await supabase
+            .from("profiles")
+            .select("is_subscribed")
+            .eq("id", value: user.id.uuidString)
+            .single()
+            .execute()
+            .value
+
+        return response.is_subscribed
+    }
+
     /// Gets the current session if one exists
     /// - Returns: The current session, or nil if not authenticated
     /// - Note: Supabase automatically refreshes expired access tokens using the refresh token
@@ -132,6 +147,12 @@ class SupabaseManager {
         )
         return session
     }
+}
+
+// MARK: - Response Types
+
+private struct ProfileResponse: Codable {
+    let is_subscribed: Bool
 }
 
 // MARK: - Custom Auth Errors

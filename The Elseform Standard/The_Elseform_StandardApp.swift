@@ -19,15 +19,7 @@ struct The_Elseform_StandardApp: App {
 
     var body: some Scene {
         WindowGroup {
-            Group {
-                if authManager.isAuthenticated {
-                    // User is logged in - show headlines
-                    ContentView()
-                } else {
-                    // User is not logged in - show login screen
-                    LoginView()
-                }
-            }
+            ContentView()
             .background(Color("SwissCoffee"))
             .ignoresSafeArea()
             .task {

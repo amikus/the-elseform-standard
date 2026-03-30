@@ -17,6 +17,9 @@ class AuthenticationManager {
     /// When this changes, any views observing it will automatically update
     var isAuthenticated: Bool = false
 
+    /// Tracks whether the authenticated user has an active subscription
+    var isSubscribed: Bool = false
+
     /// Reference to Supabase manager for auth operations
     private let supabaseManager = SupabaseManager.shared
 
@@ -36,21 +39,28 @@ class AuthenticationManager {
             // If we got a session, user is logged in
             isAuthenticated = session != nil
 
+            if session != nil {
+                isSubscribed = try await supabaseManager.fetchIsSubscribed()
+            }
+
         } catch {
             // No valid session found (or error checking)
             isAuthenticated = false
+            isSubscribed = false
         }
     }
 
     /// Call this after successful sign in or sign up
     @MainActor
-    func signIn() {
+    func signIn() async {
         isAuthenticated = true
+        isSubscribed = (try? await supabaseManager.fetchIsSubscribed()) ?? false
     }
 
     /// Call this after signing out
     @MainActor
     func signOut() {
         isAuthenticated = false
+        isSubscribed = false
     }
 }

@@ -224,7 +224,7 @@ struct LoginView: View {
 
             // Success! Update auth state
             // This will trigger the App to switch to ContentView
-            authManager.signIn()
+            await authManager.signIn()
 
         } catch {
             // Handle errors with user-friendly messages
@@ -261,7 +261,7 @@ struct LoginView: View {
             )
 
             // Success! Update auth state
-            authManager.signIn()
+            await authManager.signIn()
 
         } catch {
             // Handle errors

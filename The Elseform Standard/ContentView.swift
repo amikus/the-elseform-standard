@@ -53,18 +53,44 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             VStack(alignment: .leading, spacing: 0) {
+                                // TODO: ELSE-StoreKit — When StoreKit is added, wire purchase confirmation
+                                // to set is_subscribed = true in Supabase (via webhook or client call).
+                                // AuthenticationManager.isSubscribed will then reflect this automatically.
                                 ForEach(headlines.sorted(by: { $0.position < $1.position })) { headline in
                                     if let story = headline.stories {
-                                        NavigationLink(destination: StoryDetailView(story: story)) {
-                                            HeadlineView(
-                                                text: story.headline,
-                                                position: headline.position,
-                                                storyType: story.story_type
-                                            )
+                                        ZStack(alignment: .bottomTrailing) {
+                                            NavigationLink(destination: StoryDetailView(story: story)) {
+                                                HeadlineView(
+                                                    text: story.headline,
+                                                    position: headline.position,
+                                                    storyType: story.story_type
+                                                )
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                            .accessibilityLabel(story.headline)
+                                            .accessibilityHint(headline.position == 1 || authManager.isSubscribed ? "Opens full story" : "Subscribe to read")
+                                            .blur(radius: headline.position == 1 || authManager.isSubscribed ? 0 : 3)
+                                            .disabled(headline.position != 1 && !authManager.isSubscribed)
+
+                                            if headline.position == 5 && !authManager.isSubscribed {
+                                                NavigationLink(destination: LoginView()) {
+                                                    Text("Subscribe / Sign In")
+                                                        .font(.system(size: 9, weight: .bold))
+                                                        .tracking(2)
+                                                        .foregroundColor(.black)
+                                                        .padding(.horizontal, 10)
+                                                        .padding(.vertical, 5)
+                                                        .background(Color("SwissCoffee").opacity(0.95))
+                                                        .overlay(
+                                                            RoundedRectangle(cornerRadius: 3)
+                                                                .stroke(Color.black, lineWidth: 0.5)
+                                                        )
+                                                        .cornerRadius(3)
+                                                }
+                                                .padding([.bottom, .trailing], 8)
+                                                .accessibilityLabel("Subscribe or sign in to read all headlines")
+                                            }
                                         }
-                                        .buttonStyle(PlainButtonStyle())
-                                        .accessibilityLabel(story.headline)
-                                        .accessibilityHint("Opens full story")
 
                                         if headline.position < 5 {
                                             Divider()
@@ -86,7 +112,7 @@ struct ContentView: View {
                     }
                 }
 
-                FooterView(isSignedIn: true, onSignOut: handleSignOut)
+                FooterView(isSignedIn: authManager.isAuthenticated, onSignOut: handleSignOut)
             }
             .background(Color("SwissCoffee"))
             .foregroundColor(Color.black)
