@@ -74,7 +74,7 @@ struct ContentView: View {
 
                                             if headline.position == 5 && !authManager.isSubscribed {
                                                 NavigationLink(destination: LoginView()) {
-                                                    Text("Subscribe / Sign In")
+                                                    Text(authManager.isAuthenticated ? "Subscribe" : "Subscribe / Sign In")
                                                         .font(.system(size: 9, weight: .bold))
                                                         .tracking(2)
                                                         .foregroundColor(.black)
@@ -88,7 +88,7 @@ struct ContentView: View {
                                                         .cornerRadius(3)
                                                 }
                                                 .padding([.bottom, .trailing], 8)
-                                                .accessibilityLabel("Subscribe or sign in to read all headlines")
+                                                .accessibilityLabel(authManager.isAuthenticated ? "Subscribe to read all headlines" : "Subscribe or sign in to read all headlines")
                                             }
                                         }
 
