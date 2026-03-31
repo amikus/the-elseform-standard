@@ -22,6 +22,7 @@ struct LoginView: View {
     }
 
     @Environment(AuthenticationManager.self) private var authManager
+    @Environment(\.dismiss) private var dismiss
 
     private let supabaseManager = SupabaseManager.shared
 
@@ -32,8 +33,7 @@ struct LoginView: View {
     @State private var isLoading: Bool = false
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottom) {
                 VStack(spacing: 0) {
                     BannerView()
 
@@ -187,10 +187,9 @@ struct LoginView: View {
                 }
 
                 FooterView(isSignedIn: false, onSignOut: nil)
-            }
-            .background(Color("SwissCoffee"))
-            .foregroundColor(Color.black)
         }
+        .background(Color("SwissCoffee"))
+        .foregroundColor(Color.black)
     }
 
     // MARK: - Authentication Function
@@ -222,9 +221,9 @@ struct LoginView: View {
                 _ = try await supabaseManager.signUp(email: email, password: password)
             }
 
-            // Success! Update auth state
-            // This will trigger the App to switch to ContentView
+            // Success! Update auth state and return to headlines
             await authManager.signIn()
+            dismiss()
 
         } catch {
             // Handle errors with user-friendly messages
@@ -260,8 +259,9 @@ struct LoginView: View {
                 nonce: nil
             )
 
-            // Success! Update auth state
+            // Success! Update auth state and return to headlines
             await authManager.signIn()
+            dismiss()
 
         } catch {
             // Handle errors
