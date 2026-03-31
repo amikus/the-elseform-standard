@@ -111,7 +111,7 @@ struct ContentView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, 16)
-                    .padding(.bottom, 136)
+                    .padding(.bottom, 76)
                     .accessibilityLabel(authManager.isAuthenticated ? "Subscribe to read all headlines" : "Subscribe or sign in to read all headlines")
                 }
 
