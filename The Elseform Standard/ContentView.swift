@@ -72,24 +72,6 @@ struct ContentView: View {
                                             .blur(radius: headline.position == 1 || authManager.isSubscribed ? 0 : 3)
                                             .disabled(headline.position != 1 && !authManager.isSubscribed)
 
-                                            if headline.position == 5 && !authManager.isSubscribed {
-                                                NavigationLink(destination: LoginView()) {
-                                                    Text(authManager.isAuthenticated ? "Subscribe" : "Subscribe / Sign In")
-                                                        .font(.system(size: 18, weight: .bold))
-                                                        .tracking(4)
-                                                        .foregroundColor(.black)
-                                                        .padding(.horizontal, 20)
-                                                        .padding(.vertical, 10)
-                                                        .background(Color("SwissCoffee").opacity(0.95))
-                                                        .overlay(
-                                                            RoundedRectangle(cornerRadius: 3)
-                                                                .stroke(Color.black, lineWidth: 0.5)
-                                                        )
-                                                        .cornerRadius(3)
-                                                }
-                                                .padding([.bottom, .trailing], 8)
-                                                .accessibilityLabel(authManager.isAuthenticated ? "Subscribe to read all headlines" : "Subscribe or sign in to read all headlines")
-                                            }
                                         }
 
                                         if headline.position < 5 {
@@ -110,6 +92,27 @@ struct ContentView: View {
                     if scenePhase == .active {
                         Task { await loadHeadlines() }
                     }
+                }
+
+                if !authManager.isSubscribed {
+                    NavigationLink(destination: LoginView()) {
+                        Text(authManager.isAuthenticated ? "Subscribe" : "Subscribe / Sign In")
+                            .font(.system(size: 16, weight: .bold))
+                            .tracking(4)
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 9)
+                            .background(Color("SwissCoffee").opacity(0.95))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 3)
+                                    .stroke(Color.black, lineWidth: 0.5)
+                            )
+                            .cornerRadius(3)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 68)
+                    .accessibilityLabel(authManager.isAuthenticated ? "Subscribe to read all headlines" : "Subscribe or sign in to read all headlines")
                 }
 
                 FooterView(isSignedIn: authManager.isAuthenticated, onSignOut: handleSignOut)
