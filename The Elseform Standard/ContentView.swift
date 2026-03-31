@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var headlines: [DailyHeadline] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var showSubscribeAlert = false
 
     var body: some View {
         NavigationStack {
@@ -95,24 +96,30 @@ struct ContentView: View {
                 }
 
                 if !authManager.isSubscribed {
-                    NavigationLink(destination: LoginView()) {
-                        Text(authManager.isAuthenticated ? "Subscribe" : "Subscribe / Sign In")
-                            .font(.system(size: 16, weight: .bold))
-                            .tracking(4)
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 9)
-                            .background(Color("SwissCoffee").opacity(0.95))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 3)
-                                    .stroke(Color.black, lineWidth: 0.5)
-                            )
-                            .cornerRadius(3)
+                    // TODO: ELSE-StoreKit — Replace Button branch with StoreKit purchase sheet
+                    Group {
+                        if authManager.isAuthenticated {
+                            Button {
+                                showSubscribeAlert = true
+                            } label: {
+                                badgeLabel("Subscribe")
+                            }
+                            .accessibilityLabel("Subscribe to read all headlines")
+                        } else {
+                            NavigationLink(destination: LoginView()) {
+                                badgeLabel("Subscribe / Sign In")
+                            }
+                            .accessibilityLabel("Subscribe or sign in to read all headlines")
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, 16)
                     .padding(.bottom, 76)
-                    .accessibilityLabel(authManager.isAuthenticated ? "Subscribe to read all headlines" : "Subscribe or sign in to read all headlines")
+                    .alert("Subscriptions Coming Soon", isPresented: $showSubscribeAlert) {
+                        Button("OK", role: .cancel) {}
+                    } message: {
+                        Text("In-app subscriptions are not yet available. Check back soon!")
+                    }
                 }
 
                 FooterView(isSignedIn: authManager.isAuthenticated, onSignOut: handleSignOut)
@@ -171,6 +178,21 @@ struct ContentView: View {
             }
         }
     }
+}
+
+private func badgeLabel(_ text: String) -> some View {
+    Text(text)
+        .font(.system(size: 16, weight: .bold))
+        .tracking(4)
+        .foregroundColor(.black)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 9)
+        .background(Color("SwissCoffee").opacity(0.95))
+        .overlay(
+            RoundedRectangle(cornerRadius: 3)
+                .stroke(Color.black, lineWidth: 0.5)
+        )
+        .cornerRadius(3)
 }
 
 struct HeadlineView: View {
