@@ -75,11 +75,11 @@ struct ContentView: View {
                                             if headline.position == 5 && !authManager.isSubscribed {
                                                 NavigationLink(destination: LoginView()) {
                                                     Text(authManager.isAuthenticated ? "Subscribe" : "Subscribe / Sign In")
-                                                        .font(.system(size: 27, weight: .bold))
-                                                        .tracking(6)
+                                                        .font(.system(size: 18, weight: .bold))
+                                                        .tracking(4)
                                                         .foregroundColor(.black)
-                                                        .padding(.horizontal, 30)
-                                                        .padding(.vertical, 15)
+                                                        .padding(.horizontal, 20)
+                                                        .padding(.vertical, 10)
                                                         .background(Color("SwissCoffee").opacity(0.95))
                                                         .overlay(
                                                             RoundedRectangle(cornerRadius: 3)
