@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var errorMessage: String?
     @State private var showSubscribeAlert = false
 
+    private let featureStoryDetailEnabled = false
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -59,20 +61,29 @@ struct ContentView: View {
                                 // AuthenticationManager.isSubscribed will then reflect this automatically.
                                 ForEach(headlines.sorted(by: { $0.position < $1.position })) { headline in
                                     if let story = headline.stories {
-                                        ZStack(alignment: .bottomTrailing) {
-                                            NavigationLink(destination: StoryDetailView(story: story)) {
-                                                HeadlineView(
-                                                    text: story.headline,
-                                                    position: headline.position,
-                                                    storyType: story.story_type
-                                                )
+                                        if featureStoryDetailEnabled {
+                                            ZStack(alignment: .bottomTrailing) {
+                                                NavigationLink(destination: StoryDetailView(story: story)) {
+                                                    HeadlineView(
+                                                        text: story.headline,
+                                                        position: headline.position,
+                                                        storyType: story.story_type
+                                                    )
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
+                                                .accessibilityLabel(story.headline)
+                                                .accessibilityHint(headline.position == 1 || authManager.isSubscribed ? "Opens full story" : "Subscribe to read")
+                                                .blur(radius: headline.position == 1 || authManager.isSubscribed ? 0 : 3)
+                                                .disabled(headline.position != 1 && !authManager.isSubscribed)
                                             }
-                                            .buttonStyle(PlainButtonStyle())
+                                        } else {
+                                            HeadlineView(
+                                                text: story.headline,
+                                                position: headline.position,
+                                                storyType: story.story_type
+                                            )
                                             .accessibilityLabel(story.headline)
-                                            .accessibilityHint(headline.position == 1 || authManager.isSubscribed ? "Opens full story" : "Subscribe to read")
                                             .blur(radius: headline.position == 1 || authManager.isSubscribed ? 0 : 3)
-                                            .disabled(headline.position != 1 && !authManager.isSubscribed)
-
                                         }
 
                                         if headline.position < 5 {
