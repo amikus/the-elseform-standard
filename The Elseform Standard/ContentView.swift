@@ -238,7 +238,7 @@ struct FooterView: View {
                 .frame(height:2)
 
             HStack(alignment: .top) {
-                Text ("© 2025 The Elseform Standard")
+                Text ("© 2026 The Elseform Standard")
                     .font(.caption)
                     .foregroundColor(.gray)
 
