@@ -87,6 +87,29 @@ class SupabaseManager {
         try await supabase.auth.signOut()
     }
 
+    /// Deletes the current user's account, including their profile row and auth user
+    /// Uses URLSession directly to avoid the Supabase SDK hanging on token refresh
+    /// after the auth user is deleted mid-request.
+    /// - Throws: Error if the session is missing or the Edge Function returns a non-200 response
+    func deleteAccount() async throws {
+        guard let session = try? await supabase.auth.session else {
+            throw AuthError.noSession
+        }
+
+        let url = URL(string: "https://rdywvvjludftvayfkgff.supabase.co/functions/v1/delete-account")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("sb_publishable_B5tPZj4HpwTLFZKyQpWFuA_EkuCuqcA", forHTTPHeaderField: "apikey")
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw AuthError.deletionFailed
+        }
+    }
+
     /// Sends a password reset email to the user
     /// - Parameter email: The user's email address
     /// - Throws: Error if email sending fails or network issues
@@ -160,11 +183,14 @@ private struct ProfileResponse: Codable {
 /// Custom errors for authentication flows
 enum AuthError: LocalizedError {
     case noSession
+    case deletionFailed
 
     var errorDescription: String? {
         switch self {
         case .noSession:
             return "Please check your email to confirm your account before signing in."
+        case .deletionFailed:
+            return "Account deletion failed. Please try again."
         }
     }
 }

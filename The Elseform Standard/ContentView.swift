@@ -262,6 +262,15 @@ struct FooterView: View {
                             .foregroundColor(.black)
                     }
 
+                    NavigationLink(destination: SettingsView()) {
+                        Text("Settings")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.black)
+                    }
+                    .opacity(isSignedIn ? 1.0 : 0.0)
+                    .disabled(!isSignedIn)
+                    .accessibilityHidden(!isSignedIn)
+
                     // Sign Out button - invisible when not signed in, but takes up space
                     Button(action: {
                         onSignOut?()
