@@ -17,15 +17,15 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 24) {
-                Text("Our privacy policy and support information are available on the About page.")
+                NavigationLink(destination: AboutView()) {
+                    (Text("Our privacy policy and support information are available on the ")
+                    + Text("About page")
+                        .fontWeight(.medium)
+                        .foregroundColor(.black)
+                    + Text("."))
                     .font(.caption)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
-
-                NavigationLink(destination: AboutView()) {
-                    Text("About")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.black)
                 }
 
                 Button("Delete Account") {
