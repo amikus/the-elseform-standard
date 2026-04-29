@@ -17,6 +17,11 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 24) {
+                Text("Our privacy policy and support information are available on the About page.")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+
                 Button("Delete Account") {
                     showDeleteConfirmation = true
                 }
