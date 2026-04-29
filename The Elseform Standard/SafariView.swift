@@ -4,14 +4,38 @@
 //
 
 import SwiftUI
-import SafariServices
+import WebKit
 
-struct SafariView: UIViewControllerRepresentable {
+struct SafariView: View {
+    let url: URL
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            WebView(url: url)
+                .ignoresSafeArea()
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.black)
+                        }
+                    }
+                }
+        }
+    }
+}
+
+private struct WebView: UIViewRepresentable {
     let url: URL
 
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        SFSafariViewController(url: url)
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.load(URLRequest(url: url))
+        return webView
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+    func updateUIView(_ webView: WKWebView, context: Context) {}
 }
