@@ -6,6 +6,9 @@
 import SwiftUI
 
 struct AboutView: View {
+    @State private var showPrivacy = false
+    @State private var showSupport = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -32,12 +35,33 @@ struct AboutView: View {
                     .font(.custom("Georgia", size: 16))
                     .foregroundColor(.black)
                     .lineSpacing(4)
+
+                Divider()
+
+                Text("For questions, feedback, or curiosity, we're reachable. We're a small team, and we read every email.")
+                    .font(.custom("Georgia", size: 14))
+                    .foregroundColor(.gray)
+                    .lineSpacing(4)
+
+                Button("Privacy Policy") { showPrivacy = true }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.black)
+
+                Button("Support") { showSupport = true }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.black)
             }
             .padding(24)
-            
+
         }
         .background(Color("SwissCoffee"))
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showPrivacy) {
+            SafariView(url: URL(string: "https://theelseformstandard.netlify.app/privacy")!)
+        }
+        .sheet(isPresented: $showSupport) {
+            SafariView(url: URL(string: "https://theelseformstandard.netlify.app/support")!)
+        }
     }
 }
 
