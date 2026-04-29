@@ -22,6 +22,12 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
 
+                NavigationLink(destination: AboutView()) {
+                    Text("About")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.black)
+                }
+
                 Button("Delete Account") {
                     showDeleteConfirmation = true
                 }
