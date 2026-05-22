@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import RevenueCat
 
 struct SettingsView: View {
     @Environment(AuthenticationManager.self) private var authManager
@@ -12,6 +13,7 @@ struct SettingsView: View {
 
     @State private var showDeleteConfirmation = false
     @State private var isDeleting = false
+    @State private var isRestoring = false
     @State private var errorMessage: String?
 
     var body: some View {
@@ -27,6 +29,12 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                 }
+
+                Button("Restore Purchases") {
+                    Task { await restorePurchases() }
+                }
+                .foregroundColor(.gray)
+                .disabled(isRestoring || isDeleting)
 
                 Button("Delete Account") {
                     showDeleteConfirmation = true
@@ -46,7 +54,7 @@ struct SettingsView: View {
                     Text("This will permanently delete your account and all associated data. This cannot be undone.")
                 }
 
-                if isDeleting {
+                if isDeleting || isRestoring {
                     ProgressView()
                 }
 
@@ -75,6 +83,21 @@ struct SettingsView: View {
         } catch {
             isDeleting = false
             errorMessage = "Could not delete your account. Please try again."
+        }
+    }
+
+    @MainActor
+    private func restorePurchases() async {
+        isRestoring = true
+        errorMessage = nil
+        defer { isRestoring = false }
+        do {
+            _ = try await Purchases.shared.restorePurchases()
+            // Restore re-validates the receipt with Apple but does not re-fire the
+            // ELSE-81 webhook; refresh is_subscribed from Supabase (the source of truth).
+            await authManager.checkAuthentication()
+        } catch {
+            errorMessage = "Could not restore purchases. Please try again."
         }
     }
 }
