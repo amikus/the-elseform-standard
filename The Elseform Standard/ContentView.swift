@@ -3,6 +3,7 @@
 //  The Elseform Standard
 //
 import SwiftUI
+import RevenueCat
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -13,7 +14,10 @@ struct ContentView: View {
     @State private var headlines: [DailyHeadline] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @State private var showSubscribeAlert = false
+    @State private var subscribePackage: Package?
+    @State private var isPurchasing = false
+    @State private var purchaseErrorMessage: String?
+    @State private var showPurchaseError = false
 
     private let featureStoryDetailEnabled = false
 
@@ -56,9 +60,6 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             VStack(alignment: .leading, spacing: 0) {
-                                // TODO: ELSE-StoreKit — When StoreKit is added, wire purchase confirmation
-                                // to set is_subscribed = true in Supabase (via webhook or client call).
-                                // AuthenticationManager.isSubscribed will then reflect this automatically.
                                 ForEach(headlines.sorted(by: { $0.position < $1.position })) { headline in
                                     if let story = headline.stories {
                                         if featureStoryDetailEnabled {
@@ -107,15 +108,16 @@ struct ContentView: View {
                 }
 
                 if !authManager.isSubscribed {
-                    // TODO: ELSE-StoreKit — Replace Button branch with StoreKit purchase sheet
                     Group {
                         if authManager.isAuthenticated {
                             Button {
-                                showSubscribeAlert = true
+                                Task { await purchaseSubscription() }
                             } label: {
                                 badgeLabel("Subscribe")
                             }
+                            .disabled(isPurchasing)
                             .accessibilityLabel("Subscribe to read all headlines")
+                            .task { await loadOffering() }
                         } else {
                             NavigationLink(destination: LoginView()) {
                                 badgeLabel("Subscribe / Sign In")
@@ -126,10 +128,10 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, 16)
                     .padding(.bottom, 76)
-                    .alert("Subscriptions Coming Soon", isPresented: $showSubscribeAlert) {
+                    .alert("Purchase Failed", isPresented: $showPurchaseError) {
                         Button("OK", role: .cancel) {}
                     } message: {
-                        Text("In-app subscriptions are not yet available. Check back soon!")
+                        Text(purchaseErrorMessage ?? "Please try again.")
                     }
                 }
 
@@ -187,6 +189,39 @@ struct ContentView: View {
                 // (rare, usually means already signed out)
                 authManager.signOut()
             }
+        }
+    }
+
+    // MARK: - Subscription Purchase
+
+    @MainActor
+    private func loadOffering() async {
+        do {
+            let offerings = try await Purchases.shared.offerings()
+            subscribePackage = offerings.current?.monthly ?? offerings.current?.availablePackages.first
+        } catch {
+            print("Error fetching offerings: \(error)")
+        }
+    }
+
+    @MainActor
+    private func purchaseSubscription() async {
+        guard let package = subscribePackage else {
+            purchaseErrorMessage = "Subscriptions are temporarily unavailable. Please try again later."
+            showPurchaseError = true
+            return
+        }
+        isPurchasing = true
+        defer { isPurchasing = false }
+        do {
+            let result = try await Purchases.shared.purchase(package: package)
+            if result.userCancelled { return }
+            // The ELSE-81 webhook is the source of truth for is_subscribed; refresh
+            // from Supabase so the paywall lifts without a background/foreground cycle.
+            await authManager.checkAuthentication()
+        } catch {
+            purchaseErrorMessage = "Could not complete the purchase. Please try again."
+            showPurchaseError = true
         }
     }
 }
