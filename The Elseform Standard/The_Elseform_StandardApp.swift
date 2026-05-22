@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RevenueCat
 
 @main
 struct The_Elseform_StandardApp: App {
@@ -16,6 +17,13 @@ struct The_Elseform_StandardApp: App {
     @State private var showUpdatePassword = false
 
     private let supabaseManager = SupabaseManager.shared
+
+    init() {
+        #if DEBUG
+        Purchases.logLevel = .debug
+        #endif
+        Purchases.configure(withAPIKey: "appl_rDIxZcqQFNeBdEXiijTcsHSesDP")
+    }
 
     var body: some Scene {
         WindowGroup {
