@@ -5,6 +5,7 @@
 
 import Foundation
 import SwiftUI
+import RevenueCat
 
 /// Manages authentication state across the entire app
 /// Uses @Observable to automatically update UI when auth state changes
@@ -39,8 +40,11 @@ class AuthenticationManager {
             // If we got a session, user is logged in
             isAuthenticated = session != nil
 
-            if session != nil {
+            if let session = session {
                 isSubscribed = try await supabaseManager.fetchIsSubscribed()
+                Purchases.shared.logIn(session.user.id.uuidString) { _, _, error in
+                    if let error { print("RevenueCat logIn error: \(error)") }
+                }
             }
 
         } catch {
@@ -55,6 +59,11 @@ class AuthenticationManager {
     func signIn() async {
         isAuthenticated = true
         isSubscribed = (try? await supabaseManager.fetchIsSubscribed()) ?? false
+        if let session = try? await supabaseManager.getCurrentSession() {
+            Purchases.shared.logIn(session.user.id.uuidString) { _, _, error in
+                if let error { print("RevenueCat logIn error: \(error)") }
+            }
+        }
     }
 
     /// Call this after signing out
@@ -62,5 +71,8 @@ class AuthenticationManager {
     func signOut() {
         isAuthenticated = false
         isSubscribed = false
+        Purchases.shared.logOut { _, error in
+            if let error { print("RevenueCat logOut error: \(error)") }
+        }
     }
 }
