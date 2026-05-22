@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16012BB32FC0DD98009A1BCA /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 16012BB22FC0DD98009A1BCA /* RevenueCat */; };
 		16B272FA2E81F10200BD065E /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272F92E81F10200BD065E /* Auth */; };
 		16B272FC2E81F10200BD065E /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272FB2E81F10200BD065E /* Functions */; };
 		16B272FE2E81F10200BD065E /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 16B272FD2E81F10200BD065E /* PostgREST */; };
@@ -34,6 +35,7 @@
 			files = (
 				16B272FE2E81F10200BD065E /* PostgREST in Frameworks */,
 				16B272FC2E81F10200BD065E /* Functions in Frameworks */,
+				16012BB32FC0DD98009A1BCA /* RevenueCat in Frameworks */,
 				16F8DD9E2E81F55C004BAD34 /* Supabase in Frameworks */,
 				16B272FA2E81F10200BD065E /* Auth in Frameworks */,
 				16B273022E81F10200BD065E /* Storage in Frameworks */,
@@ -94,6 +96,7 @@
 				16B272FF2E81F10200BD065E /* Realtime */,
 				16B273012E81F10200BD065E /* Storage */,
 				16F8DD9D2E81F55C004BAD34 /* Supabase */,
+				16012BB22FC0DD98009A1BCA /* RevenueCat */,
 			);
 			productName = "The Elseform Standard";
 			productReference = 16F85E382E52B5BF00E5B7BE /* The Elseform Standard.app */;
@@ -125,6 +128,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				16012BB12FC0DD98009A1BCA /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 16F85E392E52B5BF00E5B7BE /* Products */;
@@ -311,7 +315,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.theelseform.The-Elseform-Standard";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -358,7 +362,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.1.7;
+				MARKETING_VERSION = 1.1.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.theelseform.The-Elseform-Standard";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -395,6 +399,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		16012BB12FC0DD98009A1BCA /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.73.1;
+			};
+		};
 		16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -406,6 +418,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		16012BB22FC0DD98009A1BCA /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16012BB12FC0DD98009A1BCA /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
+		};
 		16B272F92E81F10200BD065E /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 16B272F82E81F10200BD065E /* XCRemoteSwiftPackageReference "supabase-swift" */;
