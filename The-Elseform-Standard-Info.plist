@@ -5,12 +5,12 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.theelseform.passwordreset</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>theelseformstandard</string>
 			</array>
-			<key>CFBundleURLName</key>
-			<string>com.theelseform.passwordreset</string>
 		</dict>
 	</array>
 </dict>
